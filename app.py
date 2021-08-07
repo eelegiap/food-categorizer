@@ -41,6 +41,7 @@ def upload_file():
         # now the data manipulation begins...
         df = pd.read_excel('uploads/'+filename, engine='openpyxl')
         foodlist = df.values.tolist()
+        foodlist = [item for item in foodlist if (pd.isna(item[0]) == False)]
         # categorization
         textlist = []
         keyworddict = {}
