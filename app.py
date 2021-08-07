@@ -1,4 +1,4 @@
-from flask import Flask, render_template, flash, request, redirect, url_for
+from flask import Flask, render_template, flash, request, redirect, url_for, send_file
 import os
 import pandas as pd
 from werkzeug.utils import secure_filename
@@ -13,24 +13,26 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 def delete_files():
-    for f in os.listdir('uploads'):
-        os.remove(os.path.join('uploads', f))
+    for folder in ['uploads','downloads']:
+        for f in os.listdir(folder):
+            os.remove(os.path.join(folder, f))
 
 @app.route("/", methods=['GET', 'POST'])
 def upload_file():
     filefound = False
     if request.method == 'POST':
         delete_files()
+        allkeys = [key for (key, value) in request.form.items()]
         # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
-            return render_template('index.html',upload='has failed!')
+            return render_template('index.html')
         file = request.files['file']
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
         if file.filename == '':
             flash('No selected file')
-            return render_template('index.html',upload='has failed!')
+            return render_template('index.html')
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -94,11 +96,72 @@ def upload_file():
                     correctlist.append(food)
             corrdict[cfpcat] = correctlist
         # correlation dictionary complete
-        for item in corrdict['Eggs']:
-            print(item)
-        return render_template('index.html',upload='of '+filename+' is a success!')
+        # setting up set dict
+        # convert corr_dict to corr_set_dict
+        setdict = dict()
+        newdict = dict()
+        for key in corrdict:
+            newdict[key] = []
+            setdict[key] = list(set([item for (item, price) in corrdict[key]]))
+            for new_item in setdict[key]:
+                item_total = 0
+                for orig_item, price in corrdict[key]:
+                    if new_item == orig_item:
+                        item_total += float(price)
+                newdict[key].append((new_item, item_total))
+        exceldict = dict()
+        for key in newdict:
+            filler_lst = []
+            for i, p in newdict[key]:
+                filler_lst.append((p,i))
+            excel_lst = []
+            for p,i  in sorted(filler_lst, reverse=True):
+                excel_lst.append((i,p))
+            exceldict[key] = excel_lst
+        # write to Excel
+        writer = pd.ExcelWriter('downloads/categorized_output.xlsx')
+        for key in list(exceldict.keys()):
+            currentcatlist = exceldict[key]
+            currentdf = pd.DataFrame.from_records(sorted(currentcatlist, key=lambda item: item[1], reverse=True))
+            currentdf = currentdf.rename(columns={0: 'Item Name', 1: 'Dollars'})
+            newkey = ''
+            for char in key:
+                if char in ['[', ']', ':', '*', '?', '/', '\\']:
+                    newkey = newkey + " "
+                else:
+                    newkey = newkey + char
+            if len(newkey) > 31:
+                newkey = newkey[:31]
+            # Save df to one Excel sheet 
+            currentdf.to_excel(writer, newkey)
+        writer.save()
+        if allkeys == ['getcats']:
+            return send_file('downloads/categorized_output.xlsx',
+                        mimetype='text/xlsx',
+                        attachment_filename='Cool_Food_Categorized_Output.xlsx',
+                        as_attachment=True)
+        else:
+            # get total prices
+            totalpricedict = {}
+            for key in corrdict:
+                totalpricedict[key] = 0
+                for item, price in corrdict[key]:
+                    totalpricedict[key] += price
+            writer = pd.ExcelWriter('downloads/Cool_Food_Price_Totals.xlsx')
+            datapoints = []
+            for key in list(totalpricedict.keys()):
+                datapoint = list((key, totalpricedict[key]))
+                datapoints.append(datapoint)
+            currentdf = pd.DataFrame.from_records(datapoints)
+            currentdf = currentdf.rename(columns={0: 'CFP Category', 1: 'Total Dollars Purchased'})
+            currentdf.to_excel(writer)
+            writer.save()
+            return send_file('downloads/Cool_Food_Price_Totals.xlsx',
+                        mimetype='text/xlsx',
+                        attachment_filename='Cool_Food_Price_Totals.xlsx',
+                        as_attachment=True)
 
-    return render_template('index.html',upload='is not complete yet.')
+    return render_template('index.html')
 
 if __name__ == '__main__':
    app.run()

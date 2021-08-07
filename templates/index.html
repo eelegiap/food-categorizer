@@ -44,9 +44,9 @@
     <p>Make sure the dollars column is in number (not string form) in Excel.</p>
     <form method=post enctype=multipart/form-data>
         <input type=file name=file>
-        <input type=submit value=Upload>
+        <input type=submit name=getcats value=GenerateCategorizedData>
+        <input type=submit name=getprices value=GeneratePriceData>
       </form>
-    <p>Upload {{ upload }}</p>
 <!-- 
     <div id="accordion">
     {% for i in range(10) %}
