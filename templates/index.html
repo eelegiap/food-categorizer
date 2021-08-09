@@ -40,8 +40,11 @@
 
 <body>
     <h1>Welcome to the Cool Food Categorizer!</h1>
-    <p>Submit a file with an .xlsx or .xls extension with two columns: Food Name and Dollars (in that order)</p>
-    <p>Make sure the dollars column is in number (not string form) in Excel.</p>
+    <h3>Designed by Paige Lee, Summer 2021</h3>
+    <p>This tool categorizes food data based on the categories necessary for submission to the Cool Food Pledge.</p>
+    <p>Submit a file with an .xlsx or .xls extension with two columns: Item Name and Dollars (in that order)</p>
+    <p>The Item Name column should have the names of the individual food items, like "BEEF PATTIES KOSHER 4oz/20#CS." Make sure the dollars column is in number (not string form) in Excel.</p>
+    <p>If the system returns an error, check the spreadsheet to see that it's meeting all the specifications.</p>
     <form method=post enctype=multipart/form-data>
         <input type=file name=file>
         <input type=submit name=getcats value=GenerateCategorizedData>
