@@ -20,8 +20,8 @@ def delete_files():
 @app.route("/", methods=['GET', 'POST'])
 def upload_file():
     filefound = False
+    delete_files()
     if request.method == 'POST':
-        delete_files()
         allkeys = [key for (key, value) in request.form.items()]
         # check if the post request has the file part
         if 'file' not in request.files:
