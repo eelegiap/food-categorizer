@@ -1,67 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <title>Cool Food Categorizer by Paige</title>
+
 <head>
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="/resources/demos/style.css">
-    <style>
-        .accordion {
-          background-color: #eee;
-          color: #444;
-          cursor: pointer;
-          padding: 18px;
-          width: 100%;
-          border: none;
-          text-align: left;
-          outline: none;
-          font-size: 15px;
-          transition: 0.4s;
-        }
-        
-        .active, .accordion:hover {
-          background-color: #ccc; 
-        }
-        
-        .panel {
-          padding: 0 18px;
-          display: none;
-          background-color: white;
-          overflow: hidden;
-        }
-    </style>
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script>
-    $( function() {
-      $( "#accordion" ).accordion();
-    } );
-    </script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <style>
+    .accordion {
+      background-color: #eee;
+      color: #444;
+      cursor: pointer;
+      padding: 18px;
+      width: 100%;
+      border: none;
+      text-align: left;
+      outline: none;
+      font-size: 15px;
+      transition: 0.4s;
+    }
+
+    .active,
+    .accordion:hover {
+      background-color: #ccc;
+    }
+
+    .panel {
+      padding: 0 18px;
+      display: none;
+      background-color: white;
+      overflow: hidden;
+    }
+
+    input {
+      font-size: 20
+    }
+  </style>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+    $(function () {
+      $("#accordion").accordion();
+    });
+  </script>
 </head>
 
 <body>
-    <h1>Welcome to the Cool Food Categorizer!</h1>
-    <h3>Designed by Paige Lee, Summer 2021</h3>
-    <p>This tool categorizes food data based on the categories necessary for submission to the Cool Food Pledge.</p>
-    <p>Submit a file with an .xlsx or .xls extension with two columns: Item Name and Dollars (in that order)</p>
-    <p>The Item Name column should have the names of the individual food items, like "BEEF PATTIES KOSHER 4oz/20#CS." Make sure the dollars column is in number (not string form) in Excel.</p>
-    <p>If the system returns an error, check the spreadsheet to see that it's meeting all the specifications.</p>
-    <form method=post enctype=multipart/form-data>
-        <input type=file name=file>
-        <input type=submit name=getcats value=GenerateCategorizedData>
-        <input type=submit name=getprices value=GeneratePriceData>
-      </form>
-<!-- 
-    <div id="accordion">
-    {% for i in range(10) %}
-        <h3>Section 1</h3>
-        <div>
-          <p>
-          Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
-          ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit
-          amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut
-          odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
-          </p>
-        </div>
-    {% endfor %}
-</div> -->
+  <h1 style='color: rgb(22, 168, 22)'>Welcome to the Cool Food Categorizer!</h1>
+  <h3>Designed by OFS Intern Paige Lee, last updated August 2021</h3>
+  <p>This tool categorizes food data based on the categories necessary for submission to the Cool Food Pledge.</p>
+  <h4>How to use:</h4>
+  <ol>
+    <li>
+      <p>Choose a file with an .xlsx or .xls extension with two columns: Item Name and Dollars (in that order)</p>
+      <p>The Item Name column should have the names of the individual food items, like "BEEF PATTIES KOSHER 4oz/20#CS."
+        Make sure the dollars column is in number (not string form) in Excel.</p>
+    </li>
+    <li>
+      <p>Once loaded, select the buttons on the right to analyze the data. (Most important is "price data" for entry
+        into the Cool Food calculation spreadsheet)</p>
+      <p style='color:blue'>Note: the analysis takes 10-20 seconds to complete</p>
+    </li>
+  </ol>
+  <p>If the system returns an error, check your input spreadsheet to see that it's meeting all the specifications.</p>
+  <p style='color: tomato'>Wait until the file has loaded (shows up below) before selecting a button on the right.</p>
+  <br>
+  <hr>
+  <h3 style='color: rgb(22, 168, 22)'>Categorizer Tool</h3>
+  <form method=post enctype=multipart/form-data>
+    <input type=file name=file>
+    <input type=submit name=getcats value=CategorizedData>
+    <input type=submit name=getunused value=UncategorizedItems>
+    <input type=submit name=getprices value=PriceData>
+  </form>
+  <br>
+  <hr>
+  <h4>Additional information</h4>
+  <p>The system categorizes by checking item names against a set of keywords and non-keywords. If there is something
+    that is being incorrectly categorized or not categorized, then extra keywords or non-keywords can be added to the
+    tool. Contact Paige (paigelee@college.harvard.edu) for questions and changes.</p>
+  <p>Note: The "PriceData" button sums over the dollar amounts in the sheets in the categorized data.</p>
 </body>

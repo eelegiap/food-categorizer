@@ -141,7 +141,7 @@ def upload_file():
                         mimetype='text/xlsx',
                         attachment_filename='Cool_Food_Categorized_Output.xlsx',
                         as_attachment=True)
-        else:
+        elif allkeys == ['getprices']:
             # get total prices
             totalpricedict = {}
             for key in corrdict:
@@ -160,6 +160,28 @@ def upload_file():
             return send_file('downloads/Cool_Food_Price_Totals.xlsx',
                         mimetype='text/xlsx',
                         attachment_filename='Cool_Food_Price_Totals.xlsx',
+                        as_attachment=True)
+        else:
+            # find items which go unused (new)
+            set_of_items = set()
+            for cat in corrdict:
+                for item in corrdict[cat]:
+                    item_name = item[0]
+                    set_of_items.add(item_name)
+            not_used = set()
+            for item in foodlist:
+                item_name = item[0]
+                if item_name not in set_of_items:
+                    not_used.add(tuple(item))
+            writer = pd.ExcelWriter('downloads/Uncategorized_Items.xlsx')
+            currentdf = pd.DataFrame(sorted(list(not_used), key=lambda item: item[1], reverse=False))
+            currentdf = currentdf.rename(columns={0: 'Item (uncategorized)', 1: 'Dollars'})
+            # Save df to one Excel sheet 
+            currentdf.to_excel(writer)
+            writer.save()
+            return send_file('downloads/Uncategorized_Items.xlsx',
+                        mimetype='text/xlsx',
+                        attachment_filename='Uncategorized_Items.xlsx',
                         as_attachment=True)
 
     return render_template('index.html')
