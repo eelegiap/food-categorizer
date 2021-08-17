@@ -3,7 +3,10 @@ import os
 import pandas as pd
 from werkzeug.utils import secure_filename
 
-UPLOAD_FOLDER = 'uploads'
+
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(APP_ROOT, 'static/uploads')
+
 ALLOWED_EXTENSIONS = {'xlsx','xls'}
 
 app = Flask(__name__)
@@ -14,8 +17,10 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 def delete_files():
     for folder in ['uploads','downloads']:
-        for f in os.listdir(folder):
-            os.remove(os.path.join(folder, f))
+        approot = os.path.dirname(os.path.abspath(__file__))
+        folderpath = os.path.join(approot, 'static/'+folder)
+        for f in os.listdir(folderpath):
+            os.remove(os.path.join(folderpath, f))
 
 @app.route("/", methods=['GET', 'POST'])
 def upload_file():
@@ -39,7 +44,7 @@ def upload_file():
             filefound = True
     if filefound:
         # now the data manipulation begins...
-        df = pd.read_excel('uploads/'+filename, engine='openpyxl')
+        df = pd.read_excel('static/uploads/'+filename, engine='openpyxl')
         foodlist = df.values.tolist()
         foodlist = [item for item in foodlist if (pd.isna(item[0]) == False)]
         # categorization
@@ -120,7 +125,7 @@ def upload_file():
                 excel_lst.append((i,p))
             exceldict[key] = excel_lst
         # write to Excel
-        writer = pd.ExcelWriter('downloads/categorized_output.xlsx')
+        writer = pd.ExcelWriter('static/downloads/categorized_output.xlsx')
         for key in list(exceldict.keys()):
             currentcatlist = exceldict[key]
             currentdf = pd.DataFrame.from_records(sorted(currentcatlist, key=lambda item: item[1], reverse=True))
@@ -137,7 +142,7 @@ def upload_file():
             currentdf.to_excel(writer, newkey)
         writer.save()
         if allkeys == ['getcats']:
-            return send_file('downloads/categorized_output.xlsx',
+            return send_file('static/downloads/categorized_output.xlsx',
                         mimetype='text/xlsx',
                         attachment_filename='Cool_Food_Categorized_Output.xlsx',
                         as_attachment=True)
@@ -148,7 +153,7 @@ def upload_file():
                 totalpricedict[key] = 0
                 for item, price in corrdict[key]:
                     totalpricedict[key] += price
-            writer = pd.ExcelWriter('downloads/Cool_Food_Price_Totals.xlsx')
+            writer = pd.ExcelWriter('static/downloads/Cool_Food_Price_Totals.xlsx')
             datapoints = []
             for key in list(totalpricedict.keys()):
                 datapoint = list((key, totalpricedict[key]))
@@ -157,7 +162,7 @@ def upload_file():
             currentdf = currentdf.rename(columns={0: 'CFP Category', 1: 'Total Dollars Purchased'})
             currentdf.to_excel(writer)
             writer.save()
-            return send_file('downloads/Cool_Food_Price_Totals.xlsx',
+            return send_file('static/downloads/Cool_Food_Price_Totals.xlsx',
                         mimetype='text/xlsx',
                         attachment_filename='Cool_Food_Price_Totals.xlsx',
                         as_attachment=True)
@@ -173,13 +178,13 @@ def upload_file():
                 item_name = item[0]
                 if item_name not in set_of_items:
                     not_used.add(tuple(item))
-            writer = pd.ExcelWriter('downloads/Uncategorized_Items.xlsx')
+            writer = pd.ExcelWriter('static/downloads/Uncategorized_Items.xlsx')
             currentdf = pd.DataFrame(sorted(list(not_used), key=lambda item: item[1], reverse=False))
             currentdf = currentdf.rename(columns={0: 'Item (uncategorized)', 1: 'Dollars'})
             # Save df to one Excel sheet 
             currentdf.to_excel(writer)
             writer.save()
-            return send_file('downloads/Uncategorized_Items.xlsx',
+            return send_file('static/downloads/Uncategorized_Items.xlsx',
                         mimetype='text/xlsx',
                         attachment_filename='Uncategorized_Items.xlsx',
                         as_attachment=True)

@@ -4,44 +4,8 @@
 
 <head>
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-  <link rel="stylesheet" href="/resources/demos/style.css">
-  <style>
-    .accordion {
-      background-color: #eee;
-      color: #444;
-      cursor: pointer;
-      padding: 18px;
-      width: 100%;
-      border: none;
-      text-align: left;
-      outline: none;
-      font-size: 15px;
-      transition: 0.4s;
-    }
-
-    .active,
-    .accordion:hover {
-      background-color: #ccc;
-    }
-
-    .panel {
-      padding: 0 18px;
-      display: none;
-      background-color: white;
-      overflow: hidden;
-    }
-
-    input {
-      font-size: 20
-    }
-  </style>
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <script>
-    $(function () {
-      $("#accordion").accordion();
-    });
-  </script>
 </head>
 
 <body>
@@ -58,7 +22,7 @@
     <li>
       <p>Once loaded, select the buttons on the right to analyze the data. (Most important is "price data" for entry
         into the Cool Food calculation spreadsheet)</p>
-      <p style='color:blue'>Note: the analysis takes 10-20 seconds to complete</p>
+      <p style='color:blue'>Note: each analysis can take up to 30 seconds to complete, so don't worry if it doesn't finish immediately. If you click a button and it defaults to "No file chosen," then there's some problem with your file.</p>
     </li>
   </ol>
   <p>If the system returns an error, check your input spreadsheet to see that it's meeting all the specifications.</p>
